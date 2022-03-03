@@ -73,12 +73,19 @@ for plain browser:
   //
   // If allowMultiLoading is false, lngs and namespaces will have only one element each,
   // If allowMultiLoading is true, lngs and namespaces can have multiple elements
-  loadPath: '/locales/{{lng}}/{{ns}}.json',
+  loadPath: 'http://localhost:3333/locales/{{lng}}/{{ns}}.json',
 
   // path to post missing resources, or a function
   // function(lng, namespace) { return customPath; }
   // the returned path will interpolate lng, ns if provided like giving a static path
   addPath: '/locales/add/{{lng}}/{{ns}}',
+
+  // path where local filesystem resources get loaded from, or a function
+  // returning a path:
+  // function(lngs, namespaces) { return customPath; }
+  // the returned path will interpolate lng, ns if provided like giving a static path
+  // the function might return a promise
+  localLoadPath: '/locales/en/{{ns}}.json',
 
   // your backend server supports multiloading
   // /locales/resources.json?lng=de+en&ns=ns1+ns2
