@@ -4781,8 +4781,6 @@ var Backend = function () {
     value: function read(language, namespace, callback) {
       var _this2 = this;
 
-      console.log('read');
-
       this._readNamespaceFile(language, namespace, function (err, res) {
         if (res) {
           _this2._readAny([language], language, [namespace], namespace, callback, res);
@@ -4822,8 +4820,23 @@ var Backend = function () {
       });
     }
   }, {
+    key: "removeFile",
+    value: function removeFile(language, namespace) {
+      var addPath = this.options.addPath;
+
+      if (typeof this.options.addPath === 'function') {
+        addPath = this.options.addPath(language, namespace);
+      }
+
+      var filename = this.services.interpolator.interpolate(addPath, {
+        lng: language,
+        ns: namespace
+      });
+      (0, _readFile.removeFile)(filename, this.options).then(function () {}).catch(function () {});
+    }
+  }, {
     key: "_readAny",
-    value: function _readAny(languages, loadUrlLanguages, namespaces, loadUrlNamespaces, callback) {
+    value: function _readAny(languages, loadUrlLanguages, namespaces, loadUrlNamespaces, callback, payload) {
       var _this4 = this;
 
       var loadPath = this.options.loadPath;
@@ -4834,20 +4847,22 @@ var Backend = function () {
 
       loadPath = (0, _utils.makePromise)(loadPath);
       loadPath.then(function (resolvedLoadPath) {
+        if (!resolvedLoadPath) return callback(null, {});
+
         var url = _this4.services.interpolator.interpolate(resolvedLoadPath, {
           lng: languages.join('+'),
           ns: namespaces.join('+')
         });
 
-        _this4.loadUrl(url, callback, loadUrlLanguages, loadUrlNamespaces);
+        _this4.loadUrl(url, callback, loadUrlLanguages, loadUrlNamespaces, payload);
       });
     }
   }, {
     key: "loadUrl",
-    value: function loadUrl(url, callback, languages, namespaces) {
+    value: function loadUrl(url, callback, languages, namespaces, payload) {
       var _this5 = this;
 
-      this.options.request(this.options, url, undefined, function (err, res) {
+      this.options.request(this.options, url, payload, function (err, res) {
         if (res && (res.status >= 500 && res.status < 600 || !res.status)) return callback('failed loading ' + url + '; status code: ' + res.status, true);
         if (res && res.status >= 400 && res.status < 500) return callback('failed loading ' + url + '; status code: ' + res.status, false);
         if (!res && err && err.message && err.message.indexOf('Failed to fetch') > -1) return callback('failed loading ' + url + ': ' + err.message, true);
@@ -4935,21 +4950,6 @@ var Backend = function () {
           });
         });
       });
-    }
-  }, {
-    key: "removeFile",
-    value: function removeFile(language, namespace) {
-      var addPath = this.options.addPath;
-
-      if (typeof this.options.addPath === 'function') {
-        addPath = this.options.addPath(language, namespace);
-      }
-
-      var filename = this.services.interpolator.interpolate(addPath, {
-        lng: language,
-        ns: namespace
-      });
-      (0, _readFile.removeFile)(filename, this.options).then(function () {}).catch(function () {});
     }
   }]);
 
