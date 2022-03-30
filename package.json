@@ -1,6 +1,6 @@
 {
   "name": "i18next-http-payload-backend",
-  "version": "1.4.0-alpha",
+  "version": "1.4.0-rc.0",
   "private": false,
   "type": "module",
   "main": "./cjs/index.js",
@@ -74,7 +74,7 @@
     "test:fetch": "mocha test -R spec --exit --experimental-modules",
     "test": "npm run lint && npm run build && npm run test:fetch && npm run test:xmlhttpreq",
     "test:deno": "deno test --allow-net test/deno/*.js",
-    "preversion": "npm run test && npm run build && git push",
+    "preversion": "npm run build && git push",
     "postversion": "git push && git push --tags"
   }
 }
